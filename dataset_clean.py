@@ -1,9 +1,12 @@
+import pandas as pd
 
-r = open("adults.csv", "r")
-r = ''.join([i for i in r])
-r = r.replace("?", "Unemployed")
+df = pd.read_csv("adults.csv")
 
-w = open("adults-clean.csv", "w")
-w.writelines(r)
-w.close()
+df["native-country"] = df["native-country"].replace(to_replace=" ?", value=" Unknown")
+df["occupation"] = df["occupation"].replace(to_replace=" ?", value=" Unemployed")
+df["workclass"] = df["workclass"].replace(to_replace=" ?", value=" Unemployed")
+
+print(df.sample(100))
+
+df.to_csv("adults.csv")
 
