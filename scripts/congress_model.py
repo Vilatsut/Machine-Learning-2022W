@@ -15,9 +15,7 @@ sol_df = pd.read_csv(os.getcwd() + "/data/congress/clean_sol_congress.csv", inde
 
 # Create the training data
 X_train = df[df.columns[1:]]
-print(X_train.columns)
 X_test = test_df[df.columns[1:]]
-print(X_test.columns)
 y_train = df["class"]
 y_test = sol_df["class"]
 
