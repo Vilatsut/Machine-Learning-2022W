@@ -127,3 +127,17 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+data/dataset
+figures/adults_figure.png
+data/adult_income_data.csv
+data/amazon_review_ID.shuf.lrn.csv
+data/amazon_review_ID.shuf.sol.ex.csv
+data/amazon_review_ID.shuf.tes.csv
+data/car.c45-names
+data/car.data
+data/car.names
+data/clean_adults.csv
+data/CongressionalVotingID.shuf.lrn.csv
+data/CongressionalVotingID.shuf.sol.ex.csv
+data/CongressionalVotingID.shuf.tes.csv
+data/.adults.csv.swp
