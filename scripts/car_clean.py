@@ -4,7 +4,7 @@ import pandas as pd
 
 from sklearn import preprocessing
 
-df = pd.read_csv(os.getcwd() + "/data/car_data.csv")
+df = pd.read_csv(os.getcwd() + "/data/car/car_data.csv")
 
 # Encode labels
 label_encoder = preprocessing.LabelEncoder()
@@ -15,4 +15,4 @@ for column in columns:
 df["persons"] = df["persons"].replace("more", 5)
 df["doors"] = df["doors"].replace("5more", 5)
 
-df.to_csv("data/clean_car.csv")
+df.to_csv("data/car/clean_car.csv")

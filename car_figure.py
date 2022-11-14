@@ -2,7 +2,7 @@
 import pandas as pd
 import os
 # %%
-df_car_evaluation = pd.read_csv(os.getcwd() + '/data/car.data', sep=",")
+df_car_evaluation = pd.read_csv(os.getcwd() + '/data/car/car.data', sep=",")
 # %%
 df_car_evaluation.describe()
 # %% Piechart about the classes of the car_evaluation dataset

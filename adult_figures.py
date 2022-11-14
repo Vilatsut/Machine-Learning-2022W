@@ -2,7 +2,7 @@
 import pandas as pd
 import os
 # %%
-df_adults = pd.read_csv(os.getcwd() + '/data/clean_adults.csv')
+df_adults = pd.read_csv(os.getcwd() + '/data/adult/clean_adults.csv')
 # %% education_num chart
 df_adults_figure1 = df_adults[['education.num','income']]
 df_adults_figure1_dummies = pd.get_dummies(df_adults_figure1, columns=['income'])
