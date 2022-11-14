@@ -141,3 +141,5 @@ data/CongressionalVotingID.shuf.lrn.csv
 data/CongressionalVotingID.shuf.sol.ex.csv
 data/CongressionalVotingID.shuf.tes.csv
 data/.adults.csv.swp
+data/car_data.csv
+data/clean_car.csv
