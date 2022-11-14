@@ -9,19 +9,9 @@ from sklearn.naive_bayes import GaussianNB
 from sklearn.tree import DecisionTreeClassifier
 
 
-df = pd.read_csv(os.getcwd() + "/data/clean_adults.csv", index_col=0)
+df = pd.read_csv(os.getcwd() + "/data/clean_car.csv", index_col=0)
 
-# print(df.head())
-label_encoder = preprocessing.LabelEncoder()
-df["income"] = label_encoder.fit_transform(df["income"])
-df["workclass"] = label_encoder.fit_transform(df["workclass"])
-df["education"] = label_encoder.fit_transform(df["education"])
-df["marital.status"] = label_encoder.fit_transform(df["marital.status"])
-df["occupation"] = label_encoder.fit_transform(df["occupation"])
-df["relationship"] = label_encoder.fit_transform(df["relationship"])
-df["race"] = label_encoder.fit_transform(df["race"])
-df["sex"] = label_encoder.fit_transform(df["sex"])
-df["native.country"] = label_encoder.fit_transform(df["native.country"])
+print(df.head())
 
 
 X_train, X_test, y_train, y_test = train_test_split(
