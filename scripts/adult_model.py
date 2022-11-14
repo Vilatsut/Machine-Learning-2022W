@@ -1,9 +1,8 @@
-from matplotlib import pyplot as plt
-import pandas as pd
-import numpy as np
-import scipy as sp
 import os
-from sklearn import preprocessing, svm
+
+import pandas as pd
+
+from sklearn import svm
 from sklearn.metrics import accuracy_score
 from sklearn.model_selection import train_test_split
 from sklearn.naive_bayes import GaussianNB
@@ -31,18 +30,17 @@ dt = DecisionTreeClassifier(random_state=0)
 dt.fit(X_train, y_train)
 # Predicting
 dt_pred = dt.predict(X_test)
-# print the accuracy
+# Accuracy
 print("Accuracy of Decision Tree Classifier: ", accuracy_score(y_test, dt_pred))
  
  # KNN CLASSIFIER
 knn_clf = KNeighborsClassifier(n_neighbors = 20)
 # Training
-
 knn_clf.fit(X_train, y_train)
-
+# Prediction
 knn_clf_pred = knn_clf.predict(X_test)
+# Accuracy
 print("Accuracy of KNN: ", accuracy_score(y_test, knn_clf_pred))
-
 
 # SUPPORT VECTOR MACHINE
 svm_clf = svm.SVC()  # Linear Kernel
@@ -51,5 +49,4 @@ svm_clf.fit(X_train, y_train) # Takes approx 10min
 # Predicting
 svm_clf_pred = svm_clf.predict(X_test)
 # Accuracy
-print("Accuracy of Support Vector Machine: ",
-      accuracy_score(y_test, svm_clf_pred))
+print("Accuracy of Support Vector Machine: ", accuracy_score(y_test, svm_clf_pred))
