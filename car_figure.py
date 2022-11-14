@@ -17,6 +17,6 @@ ax1.pie(sizes, explode=explode, labels=labels, autopct='%1.1f%%',
         shadow=True, startangle=200)
 ax1.axis('equal') 
 
-plt.savefig(r'C:\Users\beregszaszim\Desktop\TU_Wien\ML\Exercise_0\car_evaluation\car_evaluation_classes.png', dpi=200)
+plt.savefig('figures/car_evaluation_classes.png', dpi=200)
 plt.show()
 # %%
