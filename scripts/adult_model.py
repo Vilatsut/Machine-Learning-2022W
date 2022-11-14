@@ -9,7 +9,7 @@ from sklearn.naive_bayes import GaussianNB
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.tree import DecisionTreeClassifier
 
-df = pd.read_csv(os.getcwd() + "/data/clean_adults.csv", index_col=0)
+df = pd.read_csv(os.getcwd() + "/data/adult/clean_adult.csv", index_col=0)
 
 # Create the training data
 X_train, X_test, y_train, y_test = train_test_split(

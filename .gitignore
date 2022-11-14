@@ -143,3 +143,16 @@ data/CongressionalVotingID.shuf.tes.csv
 data/.adults.csv.swp
 data/car_data.csv
 data/clean_car.csv
+data/adult/adult_income_data.csv
+data/adult/clean_adults.csv
+data/amazon/amazon_review_ID.shuf.lrn.csv
+data/amazon/amazon_review_ID.shuf.sol.ex.csv
+data/amazon/amazon_review_ID.shuf.tes.csv
+data/car/car_data.csv
+data/car/clean_car.csv
+data/congress/CongressionalVotingID.shuf.lrn.csv
+data/congress/CongressionalVotingID.shuf.sol.ex.csv
+data/congress/CongressionalVotingID.shuf.tes.csv
+data/adult/dataset
+data/car/car.c45-names
+data/car/car.names
