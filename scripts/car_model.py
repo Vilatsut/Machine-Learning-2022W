@@ -19,7 +19,7 @@ X_train, X_test, y_train, y_test = train_test_split(
 gnb = GaussianNB()
 # Training
 gnb.fit(X_train, y_train)
-# Prediction
+# Predicting
 gnb_pred = gnb.predict(X_test)
 # Accuracy
 print("Accuracy of Gaussian Naive Bayes: ", accuracy_score(y_test, gnb_pred))
@@ -28,7 +28,7 @@ print("Accuracy of Gaussian Naive Bayes: ", accuracy_score(y_test, gnb_pred))
 dt = DecisionTreeClassifier(random_state=0)
 # Training
 dt.fit(X_train, y_train)
-# Prediction
+# Predicting
 dt_pred = dt.predict(X_test)
 # Accuracy
 print("Accuracy of Decision Tree Classifier: ", accuracy_score(y_test, dt_pred))
@@ -37,7 +37,7 @@ print("Accuracy of Decision Tree Classifier: ", accuracy_score(y_test, dt_pred))
 knn_clf = KNeighborsClassifier(n_neighbors = 20)
 # Training
 knn_clf.fit(X_train, y_train)
-# Prediction
+# Predicting
 knn_clf_pred = knn_clf.predict(X_test)
 # Accuracy
 print("Accuracy of KNN: ", accuracy_score(y_test, knn_clf_pred))
@@ -46,7 +46,7 @@ print("Accuracy of KNN: ", accuracy_score(y_test, knn_clf_pred))
 svm_clf = SVC(C= .1, kernel='linear', gamma= 1)  # Linear Kernel
 # Training
 svm_clf.fit(X_train, y_train)
-# Pprediction
+# Predicting
 svm_clf_pred = svm_clf.predict(X_test)
 # Accuracy
 print("Accuracy of Support Vector Machine: ", accuracy_score(y_test, svm_clf_pred))
