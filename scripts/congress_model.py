@@ -1,8 +1,14 @@
 import os
+import sys
 
 import pandas as pd
 
 from helpers import experiment_DT_classifier, experiment_KN_classifier, experiment_SVM_classifier, dummy
+
+
+orig_stdout = sys.stdout
+f = open('out.txt', 'w')
+sys.stdout = f
 
 df = pd.read_csv(os.getcwd() + "/data/congress/clean_train_congress.csv", index_col=0)
 test_df = pd.read_csv(os.getcwd() + "/data/congress/clean_test_congress.csv", index_col=0)
@@ -24,3 +30,6 @@ experiment_SVM_classifier(X_train, y_train, X_test,y_test)
 
 # DUMMY
 dummy(X_train, y_train, X_test,y_test)
+
+sys.stdout = orig_stdout
+f.close()
