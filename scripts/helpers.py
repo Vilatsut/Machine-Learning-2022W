@@ -82,4 +82,4 @@ def print_scores(pred, y_test, classifier, args = []):
         best_scores[classifier]["f1_score"] = f1_scr
         best_scores[classifier]["args"] = args
         print("THEBEST: ")
-        print(best_scores)
+        print(best_scores[classifier])
