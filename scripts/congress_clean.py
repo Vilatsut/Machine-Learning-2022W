@@ -27,11 +27,15 @@ train_df["class"] = label_encoder.fit_transform(train_df["class"])
 test_df["class"] = label_encoder.fit_transform(test_df["class"])
 
 
-# # Figures
+# Figures
+# fig, ax = plt.subplots(1,3)
+# sns.countplot(x=columns[0], data=df, palette='rainbow', hue='class', ax = ax[0])
+# sns.countplot(x=columns[1], data=df, palette='rainbow', hue='class', ax = ax[1])
+# sns.countplot(x=columns[2], data=df, palette='rainbow', hue='class', ax = ax[2])
 # plt.pie(df["class"].value_counts().values, labels = np.flip(df["class"].unique()), autopct='%0.0f%%')
 # plt.show()
+
 
 # Save to files
 train_df.to_csv("data/congress/clean_train_congress.csv")
 test_df.to_csv("data/congress/clean_test_congress.csv")
-
