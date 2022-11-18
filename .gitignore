@@ -158,4 +158,4 @@ data/car/car.c45-names
 data/car/car.names
 data/congress/clean_sol_congress.csv
 data/congress/clean_test_congress.csv
-data/congress/clean_test_congress.csv
+data/congress/clean_train_congress.csv
