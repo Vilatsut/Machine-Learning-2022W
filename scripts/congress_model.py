@@ -27,7 +27,7 @@ experiment_DT_classifier(X_train, y_train, X_test,y_test)
 
 # from sklearn.tree import DecisionTreeClassifier
 # competition_df = pd.read_csv(os.getcwd() + "/data/congress/clean_comp_congress.csv", index_col=0)
-# dt = DecisionTreeClassifier(criterion="gini", splitter="best", max_depth=10)
+# dt = DecisionTreeClassifier(criterion="entropy", splitter="best", max_depth=3)
 # # Training
 # dt.fit(X_train, y_train)
 # # Predicting

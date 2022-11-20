@@ -16,10 +16,11 @@ for column in columns:
     encoded_columns.append(column + "_unknown")
     encoded_columns.append(column + "_y")
 
-# Encode data
+# One-hot encoding
 df = pd.get_dummies(df, columns = columns)
 comp_df = pd.get_dummies(comp_df, columns = columns)
 
+# Fill the dataframes with columns missing due to the variable not being present before dummy encoding.
 for e_column in encoded_columns:
     if e_column not in df.columns:
         df[e_column] = 0
@@ -39,12 +40,16 @@ test_df["class"] = y_test
 label_encoder = preprocessing.LabelEncoder()
 train_df["class"] = label_encoder.fit_transform(train_df["class"])
 test_df["class"] = label_encoder.fit_transform(test_df["class"])
+
+
+# For label encoding the data columns
 # for column in columns:
 #     train_df[column] = label_encoder.fit_transform(train_df[column])
 #     test_df[column] = label_encoder.fit_transform(test_df[column])
 #     comp_df[column] = label_encoder.fit_transform(comp_df[column])
 
-# Figures
+
+# For creating fgures of the data
 # fig, ax = plt.subplots(1,3)
 # sns.countplot(x=columns[0], data=df, palette='rainbow', hue='class', ax = ax[0])
 # sns.countplot(x=columns[1], data=df, palette='rainbow', hue='class', ax = ax[1])
