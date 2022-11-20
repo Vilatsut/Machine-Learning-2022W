@@ -76,10 +76,13 @@ def print_scores(pred, y_test, classifier, args = []):
     print("Accuracy of " + classifier +  ": ", acc_scr)
     print("F1-score of " + classifier +  ": ", f1_scr)
     print("Confusion Matrix of " + classifier +  ": \n", confusion_matrix(y_test, pred))
+    # with open(classifier + ".data", "a") as f:
+    #     f.write(str(f1_scr) + "\n")
+
 
     if acc_scr > best_scores[classifier]["acc_score"] and f1_scr > best_scores[classifier]["f1_score"]:
         best_scores[classifier]["acc_score"] = acc_scr
         best_scores[classifier]["f1_score"] = f1_scr
         best_scores[classifier]["args"] = args
-        print("THEBEST: ")
-        print(best_scores[classifier])
+        # print("THEBEST: ")
+        # print(best_scores[classifier])
