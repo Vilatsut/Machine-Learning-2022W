@@ -1,11 +1,10 @@
 # %%
 import numpy as np
-from sklearn.metrics import mean_squared_error
-from sklearn.base import RegressorMixin
+from sklearn.base import RegressorMixin, BaseEstimator
 
-class OwnLinearRegression(RegressorMixin):
+class OwnLinearRegression(BaseEstimator, RegressorMixin):
 
-    def __init__(self, learning_rate=0.001, n_iters=1000):
+    def __init__(self, learning_rate=0.5, n_iters=1000):
         self.learning_rate = learning_rate
         self.n_iters = n_iters
         self.weights, self.bias = None, None
