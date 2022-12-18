@@ -30,7 +30,7 @@ def run_skf(x, y):
 		x_fold_train, y_fold_train = x[train_index], y[train_index]
 		x_fold_test,  y_fold_test  = x[test_index],  y[test_index]
 		
-	# 	naive_bayes = GaussianNB()
+		naive_bayes = GaussianNB()
 		linear_regression = LinearRegression()
 		own_linear_regression = OwnLinearRegression()
 
@@ -39,7 +39,6 @@ def run_skf(x, y):
 		own_linear_regression.fit(x_fold_train, y_fold_train)
 
 	# 	# print(naive_bayes.score(x_fold_test, y_fold_test))
-		print(own_linear_regression.predict(x_fold_test))
 		print(own_linear_regression.score(x_fold_test, y_fold_test))
 		print(linear_regression.score(x_fold_test, y_fold_test))
 
@@ -51,7 +50,6 @@ def run_skf(x, y):
 	X = data.data
 	y = data.target
 	own_linear_regression = OwnLinearRegression()
-	own_linear_regression.fit()
 	print(cross_val_score(own_linear_regression, X, y, cv=skf))
 
 if __name__ == '__main__':
