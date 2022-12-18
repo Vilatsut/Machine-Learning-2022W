@@ -1,10 +1,12 @@
 # %%
 import numpy as np
+from sklearn.metrics import mean_squared_error
+from sklearn.base import RegressorMixin
 
-class LinearRegression:
+class OwnLinearRegression(RegressorMixin):
 
     def __init__(self, learning_rate=0.001, n_iters=1000):
-        self.lr = learning_rate
+        self.learning_rate = learning_rate
         self.n_iters = n_iters
         self.weights, self.bias = None, None
     
@@ -14,7 +16,7 @@ class LinearRegression:
         self.bias = 0
         
         # 2. Perform gradient descent calculation
-        for i in range(self.n_iterations):
+        for i in range(self.n_iters):
             # Line equation
             y_pred = np.dot(X, self.weights) + self.bias
             
@@ -28,11 +30,14 @@ class LinearRegression:
     
     def predict(self, X):
         return np.dot(X, self.weights) + self.bias
-# %%
-from sklearn.datasets import load_diabetes
 
-data = load_diabetes()
-X = data.data
-y = data.target
+
+# %%
+if __name__ == "__main__":
+    from sklearn.datasets import load_diabetes
+
+    data = load_diabetes()
+    X = data.data
+    y = data.target
 
 # %%
