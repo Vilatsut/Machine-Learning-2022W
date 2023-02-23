@@ -1,27 +1,122 @@
+# State is (row-index, col-index, velocity-x, velocity-y) tuple
+# Action is (change-x, change-y) tuple
+import numpy as np
+import random
+
+TRACK = 0
+WALL = 1
+START = 2
+FINISH = 3 
 
 class Environment:
 
-    def __init__(self) -> None:
-        pass
+    def __init__(self, racetrack: np.array) -> None:
+        self.prev_state = (0,0,0,0)
+        self.state = (0,0,0,0)
+        self.velocity = (0,0)
+        self.track: np.array = racetrack
 
-    def get_new_state(self, state, action):
-        pass
+        finish_y_coordinates, finish_x_coordinates = np.where(racetrack == 3)
+        start_y_coordinates, start_x_coordinates = np.where(racetrack == 2)
+        wall_y_coordinates, wall_x_coordinates = np.where(racetrack == 1)
+        self.map = {
+            "finish": list(zip(finish_x_coordinates, finish_y_coordinates)),
+            "start": list(zip(start_x_coordinates, start_y_coordinates)),
+            "wall": list(zip(wall_x_coordinates, wall_y_coordinates)),
+        }
+        self.episode = {
+            "actions": np.array([]),
+            "states": np.array([]),
+            "rewards": np.array([]),
+            "propabilities": np.array([])
+        }
+        self.step_count = 0
 
-    def is_finnished(self, state, action) -> bool:
-        pass
+    def get_new_state(self, action):
+        
+        self.prev_state = self.state
 
-    def is_out(self, state, action) -> bool:
-        pass
+        self.state = (
+            self.state[0] + self.state[2],
+            self.state[1] - self.state[3],
+            self.state[2] + action[0],
+            self.state[3] + action[1]
+        )
+
+    def is_finished(self) -> bool:
+
+        old_coord = self.prev_state[0:2]
+        new_coord = self.state[0:2]
+
+        walked_rows = np.array(range(old_coord[0], new_coord[0] + 1))
+        walked_cols = np.array(range(new_coord[1], old_coord[1] + 1))
+        fin = [x for x in self.map["finish"]]
+        row_col_matrix = [(x,y) for x in walked_rows for y in walked_cols]
+        intersect = [x for x in row_col_matrix if x in fin]
+
+        return len(intersect) > 0
+
+    def is_out_of_bounds(self) -> bool:
+        
+        coord = (self.state[0:2])
+        if coord[0] < 0 or coord[0] >= self.track.shape[1] or coord[1] < 0 or coord[1] >= self.track.shape[0]:
+            print(coord[0])
+            print(coord[1])
+            print(self.track.shape[0])
+            print(self.track.shape[1])
+            return True
+        else:
+            return self.track[coord[1]][coord[0]] == 1
 
     # Reset the episode
     def reset(self):
-        pass
+        self.episode = {
+            "actions": np.array([]),
+            "states": np.array([]),
+            "rewards": np.array([]),
+            "propabilities": np.array([])
+        }
+        self.step_count = 0
 
-    # Reset the car position
+    # Reset the car position and velocity
     def start(self):
-        pass
+        random_start_coord = random.choice(self.map["start"])
+        self.state = (
+            random_start_coord[0],
+            random_start_coord[1],
+            0,
+            0
+        )
 
-    def step(self, state, action):
-        pass
+    def step(self, action):
+        
+        np.append(self.episode["actions"], action)
+        reward = -1
 
-    
+        self.get_new_state(action)
+
+        if self.is_finished():
+            np.append(self.episode["rewards"], reward)
+            np.append(self.episode["states"], self.state)
+            self.step_count += 1
+            return None, self.state
+        
+        elif self.is_out_of_bounds():
+            self.start()
+
+        np.append(self.episode["rewards"], reward)
+        np.append(self.episode["states"], self.state)
+        self.step_count += 1
+
+        return reward, self.state
+
+
+from racetracks import RACETRACK_1
+
+env = Environment(RACETRACK_1)
+# env.start()
+# print(env.state)
+# print(env.step((1,1)))
+# print(env.step((1,1)))
+# print(env.step((1,1)))
+# print(env.step((1,1)))
