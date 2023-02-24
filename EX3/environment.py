@@ -8,6 +8,8 @@ WALL = 1
 START = 2
 FINISH = 3 
 
+NOISE = True
+
 class Environment:
 
     def __init__(self, racetrack: np.array) -> None:
@@ -32,18 +34,46 @@ class Environment:
         }
         self.step_count = 0
 
-    def get_new_state(self, action):
+    def __get_new_state(self, action: tuple[int, int]):
         
         self.prev_state = self.state
+        if not NOISE:
+            velocity = self.__correct_velocity((self.state[2] + action[0], self.state[3] + action[1]))
+        elif random.random() < 0.9:
+            velocity = self.__correct_velocity((self.state[2] + action[0], self.state[3] + action[1]))
+        else:
+            velocity = (self.state[2], self.state[3])
 
         self.state = (
             self.state[0] + self.state[2],
             self.state[1] - self.state[3],
-            self.state[2] + action[0],
-            self.state[3] + action[1]
+            velocity[0],
+            velocity[1]
         )
+        
+    def __correct_velocity(self, velocity):
+        
+        # Make sure velovcity is within bounds
+        if velocity[0] < 0:
+            velocity = (0, velocity[1])
+        elif velocity[0] > 4:
+            velocity = (4, velocity[1])
 
-    def is_finished(self) -> bool:
+        if velocity[1] < 0:
+            velocity = (velocity[0], 0)
+        elif velocity[1] > 4:
+            velocity = (velocity[0], 4)
+
+        # Make sure the velocity is not (0, 0)
+        if velocity == (0, 0):
+            if random.choice([True, False]):
+                velocity = (1, 0)
+            else:
+                velocity = (0, 1)
+
+        return velocity
+
+    def __is_finished(self) -> bool:
 
         old_coord = self.prev_state[0:2]
         new_coord = self.state[0:2]
@@ -56,7 +86,7 @@ class Environment:
 
         return len(intersect) > 0
 
-    def is_out_of_bounds(self) -> bool:
+    def __is_out_of_bounds(self) -> bool:
         
         coord = (self.state[0:2])
         if coord[0] < 0 or coord[0] >= self.track.shape[1] or coord[1] < 0 or coord[1] >= self.track.shape[0]:
@@ -79,7 +109,7 @@ class Environment:
         self.step_count = 0
 
     # Reset the car position and velocity
-    def start(self):
+    def __start(self):
         random_start_coord = random.choice(self.map["start"])
         self.state = (
             random_start_coord[0],
@@ -93,30 +123,19 @@ class Environment:
         np.append(self.episode["actions"], action)
         reward = -1
 
-        self.get_new_state(action)
+        self.__get_new_state(action)
 
-        if self.is_finished():
+        if self.__is_finished():
             np.append(self.episode["rewards"], reward)
             np.append(self.episode["states"], self.state)
             self.step_count += 1
             return None, self.state
         
-        elif self.is_out_of_bounds():
-            self.start()
+        elif self.__is_out_of_bounds():
+            self.__start()
 
         np.append(self.episode["rewards"], reward)
         np.append(self.episode["states"], self.state)
         self.step_count += 1
 
         return reward, self.state
-
-
-from racetracks import RACETRACK_1
-
-env = Environment(RACETRACK_1)
-# env.start()
-# print(env.state)
-# print(env.step((1,1)))
-# print(env.step((1,1)))
-# print(env.step((1,1)))
-# print(env.step((1,1)))
