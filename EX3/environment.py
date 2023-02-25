@@ -1,5 +1,3 @@
-# State is (row-index, col-index, velocity-x, velocity-y) tuple
-# Action is (change-x, change-y) tuple
 import numpy as np
 import random
 
@@ -12,11 +10,14 @@ NOISE = True
 
 class Environment:
 
+    # State is (row-index, col-index, velocity-x, velocity-y) tuple
+    # Action is (change-x, change-y) tuple
     def __init__(self, racetrack: np.array) -> None:
         self.prev_state = (0,0,0,0)
         self.state = (0,0,0,0)
-        self.velocity = (0,0)
-        self.track: np.array = racetrack
+        self.track = racetrack
+        
+        self.done = False
 
         finish_y_coordinates, finish_x_coordinates = np.where(racetrack == 3)
         start_y_coordinates, start_x_coordinates = np.where(racetrack == 2)
@@ -34,9 +35,12 @@ class Environment:
         }
         self.step_count = 0
 
+    # Calculate a new state based on current state and action
     def __get_new_state(self, action: tuple[int, int]):
         
         self.prev_state = self.state
+
+        # If noise, 90% of the time it does the action, 10% it makes no change to state
         if not NOISE:
             velocity = self.__correct_velocity((self.state[2] + action[0], self.state[3] + action[1]))
         elif random.random() < 0.9:
@@ -50,21 +54,23 @@ class Environment:
             velocity[0],
             velocity[1]
         )
-        
+    
+    # Check velocity so it adheres to the rules specified
     def __correct_velocity(self, velocity):
         
-        # Make sure velovcity is within bounds
+        # Make sure velocity is within bounds of the map
         if velocity[0] < 0:
             velocity = (0, velocity[1])
         elif velocity[0] > 4:
             velocity = (4, velocity[1])
 
+        # Make sure velocity is between 0 and 4
         if velocity[1] < 0:
             velocity = (velocity[0], 0)
         elif velocity[1] > 4:
             velocity = (velocity[0], 4)
 
-        # Make sure the velocity is not (0, 0)
+        # Make sure the velocity is not (0, 0), if it is, change x or y randomly to 1
         if velocity == (0, 0):
             if random.choice([True, False]):
                 velocity = (1, 0)
@@ -73,30 +79,84 @@ class Environment:
 
         return velocity
 
+    # Check if path crosses the finish line
     def __is_finished(self) -> bool:
 
         old_coord = self.prev_state[0:2]
         new_coord = self.state[0:2]
 
-        walked_rows = np.array(range(old_coord[0], new_coord[0] + 1))
-        walked_cols = np.array(range(new_coord[1], old_coord[1] + 1))
-        fin = [x for x in self.map["finish"]]
-        row_col_matrix = [(x,y) for x in walked_rows for y in walked_cols]
-        intersect = [x for x in row_col_matrix if x in fin]
+        path = self.__find_straight_path(old_coord, new_coord)
+
+        intersect = [x for x in path if x in self.map["finish"]]
 
         return len(intersect) > 0
 
+    # Check if path goes through wall or outside of bounds
     def __is_out_of_bounds(self) -> bool:
         
-        coord = (self.state[0:2])
-        if coord[0] < 0 or coord[0] >= self.track.shape[1] or coord[1] < 0 or coord[1] >= self.track.shape[0]:
-            print(coord[0])
-            print(coord[1])
-            print(self.track.shape[0])
-            print(self.track.shape[1])
+        old_coord = self.prev_state[0:2]
+        new_coord = self.state[0:2]
+
+        path = self.__find_straight_path(old_coord, new_coord)
+
+        intersect = [coord for coord in path if coord in self.map["wall"]]
+
+        # If out of bounds
+        if new_coord[0] < 0 or new_coord[0] >= self.track.shape[1] or new_coord[1] < 0 or new_coord[1] >= self.track.shape[0]:
             return True
+        # If path intersects wall
+        elif len(intersect) > 0:
+            return True
+        # If new coord is on wall 
         else:
-            return self.track[coord[1]][coord[0]] == 1
+            return self.track[new_coord[1]][new_coord[0]] == 1
+
+    def __find_straight_path(self, start_coord, end_coord):
+        # Unpack the start and end coordinates
+        x0, y0 = start_coord
+        x1, y1 = end_coord
+        
+        # Calculate the absolute differences between the coordinates
+        dx = abs(x1 - x0)
+        dy = abs(y1 - y0)
+        
+        # Determine the direction of the movement
+        if x0 < x1:
+            x_step = 1
+        else:
+            x_step = -1
+        
+        if y0 < y1:
+            y_step = 1
+        else:
+            y_step = -1
+        
+        # Calculate the error and the initial values of x and y
+        error = dx - dy
+        x = x0
+        y = y0
+        
+        # Create a list to store the cells on the path
+        path = []
+        
+        # Walk along the line using Bresenham's algorithm
+        while x != x1 or y != y1:
+            path.append((x, y))
+            
+            error_2 = error * 2
+            
+            if error_2 > -dy:
+                error -= dy
+                x += x_step
+            
+            if error_2 < dx:
+                error += dx
+                y += y_step
+        
+        # Add the last cell to the path
+        path.append((x, y))
+        
+        return path
 
     # Reset the episode
     def reset(self):
@@ -109,7 +169,7 @@ class Environment:
         self.step_count = 0
 
     # Reset the car position and velocity
-    def __start(self):
+    def start(self):
         random_start_coord = random.choice(self.map["start"])
         self.state = (
             random_start_coord[0],
@@ -118,6 +178,7 @@ class Environment:
             0
         )
 
+    # Make an action on state
     def step(self, action):
         
         np.append(self.episode["actions"], action)
@@ -129,13 +190,14 @@ class Environment:
             np.append(self.episode["rewards"], reward)
             np.append(self.episode["states"], self.state)
             self.step_count += 1
-            return None, self.state
+            self.done = True
+            return reward, self.state, self.done
         
         elif self.__is_out_of_bounds():
-            self.__start()
+            self.start()
 
         np.append(self.episode["rewards"], reward)
         np.append(self.episode["states"], self.state)
         self.step_count += 1
 
-        return reward, self.state
+        return reward, self.state, self.done
