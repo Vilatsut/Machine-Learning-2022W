@@ -1,11 +1,12 @@
 import numpy as np
+import random
 
+NUM_SPEEDS = 5
+NUM_ACTIONS = 9
 
-class MonteCarlo:
+class Agent:
 
-	acc_actions = np.array([[1, 1], [0, 1], [1, 0], [0, 0], [-1, 0], [0, -1], [1, -1], [-1, 1], [-1, -1]])
-	no_acc_actions = 9
-	no_speeds = 5
+	
 
 	def __init__(self, env, epsilon) -> None:
 		
@@ -17,42 +18,42 @@ class MonteCarlo:
 		self.policy = None
 		self.reset()
 
-	def run_episode(self):
+		self.acc_actions = [(1, 1), (0, 1), (1, 0), (0, 0), (-1, 0), (0, -1), (1, -1), (-1, 1), (-1, -1)]
+
+	def play_episode(self):
 		
-		episode = []
+		sequence = []
+		self.env.start()
 
-		while not self.env.is_finished():
-			pass
+		while not self.env.done:
+			
+			state = self.env.state
 
+			action = self.explore(self.policy[state])
 
-	def reset(self):
-		self.action_values = np.zeros((
-			self.env.track.shape[0],
-			self.env.track.shape[1],
-			self.no_speeds,
-			self.no_speeds,
-			self.no_acc_actions
-			), dtype=np.float32)
-		self.action_counts = np.zeros((
-			self.env.track.shape[0],
-			self.env.track.shape[1],
-			self.no_speeds,
-			self.no_speeds,
-			self.no_acc_actions			
-		), dtype=np.int32)
-		self.policy = np.zeros((
-			self.env.track.shape[0],
-			self.env.track.shape[1],
-			self.no_speeds,
-			self.no_speeds
-		), dtype=np.int32)
+			reward, state, done = self.env.step(action)
 
-	def update_policy(self):
-		self.policy = np.argmax(self.action_values, axis=-1)
+			sequence.append((state, action, reward))
+		
+		print(sequence)
+
+	def update_policy():
+		pass
 
 	def explore(self, action):
-		
+
 		if np.random.uniform(0, 1) < self.epsilon:
-			return np.random.choice(self.acc_actions)
+			return random.choice(self.acc_actions)
 		else:
 			return action
+
+	def reset(self):
+
+		self.action_values = \
+		np.zeros((self.env.track.shape[1], self.env.track.shape[0], NUM_SPEEDS, NUM_SPEEDS,
+					NUM_ACTIONS), dtype=np.float32)
+		self.action_counts = \
+		np.zeros((self.env.track.shape[1], self.env.track.shape[0], NUM_SPEEDS, NUM_SPEEDS,
+					NUM_ACTIONS), dtype=np.int32)
+		self.policy = np.zeros((self.env.track.shape[1], self.env.track.shape[0], NUM_SPEEDS, NUM_SPEEDS),
+							dtype=np.int32)
