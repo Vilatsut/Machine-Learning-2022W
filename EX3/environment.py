@@ -27,13 +27,6 @@ class Environment:
             "start": list(zip(start_x_coordinates, start_y_coordinates)),
             "wall": list(zip(wall_x_coordinates, wall_y_coordinates)),
         }
-        self.episode = {
-            "actions": np.array([]),
-            "states": np.array([]),
-            "rewards": np.array([]),
-            "propabilities": np.array([])
-        }
-        self.step_count = 0
 
     # Calculate a new state based on current state and action
     def __get_new_state(self, action: tuple[int, int]):
@@ -158,16 +151,6 @@ class Environment:
         
         return path
 
-    # Reset the episode
-    def reset(self):
-        self.episode = {
-            "actions": np.array([]),
-            "states": np.array([]),
-            "rewards": np.array([]),
-            "propabilities": np.array([])
-        }
-        self.step_count = 0
-
     # Reset the car position and velocity
     def start(self):
         random_start_coord = random.choice(self.map["start"])
@@ -177,27 +160,20 @@ class Environment:
             0,
             0
         )
+        self.done = False
 
     # Make an action on state
     def step(self, action):
         
-        np.append(self.episode["actions"], action)
         reward = -1
 
         self.__get_new_state(action)
 
         if self.__is_finished():
-            np.append(self.episode["rewards"], reward)
-            np.append(self.episode["states"], self.state)
-            self.step_count += 1
             self.done = True
-            return reward, self.state, self.done
+            return reward, self.prev_state, self.done
         
         elif self.__is_out_of_bounds():
             self.start()
 
-        np.append(self.episode["rewards"], reward)
-        np.append(self.episode["states"], self.state)
-        self.step_count += 1
-
-        return reward, self.state, self.done
+        return reward, self.prev_state, self.done

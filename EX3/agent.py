@@ -5,9 +5,6 @@ NUM_SPEEDS = 5
 NUM_ACTIONS = 9
 
 class Agent:
-
-	
-
 	def __init__(self, env, epsilon) -> None:
 		
 		self.env = env
@@ -25,35 +22,53 @@ class Agent:
 		sequence = []
 		self.env.start()
 
+		# Play an episode
 		while not self.env.done:
 			
 			state = self.env.state
 
+			# Get action based on state and either policy or random based on epsilon
 			action = self.explore(self.policy[state])
 
-			reward, state, done = self.env.step(action)
+			# Get step reward
+			reward, new_state, done = self.env.step(action)
 
+			# Add new state-action pair to sequence
 			sequence.append((state, action, reward))
 		
-		print(sequence)
+		# Get returns for state-action pairs
+		returns = np.zeros(len(sequence))
+		for i in reversed(range(len(sequence))):
+			for j in range(i + 1):
+				returns[j] += sequence[i][2]
 
-	def update_policy():
-		pass
+		# Get new action values for state-action pairs 
+		for seq, ret in zip(sequence, returns):
+			state_action = seq[0] + (seq[1],)
+			# (Return - prev_action_value) / (action_count + 1)
+			self.action_values[state_action] = (ret - self.action_values[state_action]) / (self.action_counts[state_action] + 1)
+			self.action_counts[state_action] += 1
+		
+		return returns[0], sequence
 
+	# Update policys for state-action pairs
+	def update_policy(self):
+		self.policy = np.argmax(self.action_values, axis=-1)
+
+	# Pick an action on random or based on policy
 	def explore(self, action):
-
 		if np.random.uniform(0, 1) < self.epsilon:
 			return random.choice(self.acc_actions)
 		else:
-			return action
+			return self.acc_actions[action]
 
+	# Reset the learning
 	def reset(self):
-
 		self.action_values = \
 		np.zeros((self.env.track.shape[1], self.env.track.shape[0], NUM_SPEEDS, NUM_SPEEDS,
 					NUM_ACTIONS), dtype=np.float32)
 		self.action_counts = \
 		np.zeros((self.env.track.shape[1], self.env.track.shape[0], NUM_SPEEDS, NUM_SPEEDS,
 					NUM_ACTIONS), dtype=np.int32)
-		self.policy = np.zeros((self.env.track.shape[1], self.env.track.shape[0], NUM_SPEEDS, NUM_SPEEDS),
+		self.policy = np.full((self.env.track.shape[1], self.env.track.shape[0], NUM_SPEEDS, NUM_SPEEDS), 3,
 							dtype=np.int32)
