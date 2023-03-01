@@ -32,7 +32,7 @@ class Agent:
 				# Get action based on state and either policy or random based on epsilon
 				action = self.explore(self.policy[state])
 			else:
-				action = self.policy[state]
+				action = self.acc_actions[self.policy[state]]
 
 			# Get step reward
 			reward, new_state, done = self.env.step(action)
