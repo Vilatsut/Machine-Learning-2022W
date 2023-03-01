@@ -1,5 +1,6 @@
 import numpy as np
 import random
+import matplotlib.pyplot as plt
 
 TRACK = 0
 WALL = 1
@@ -177,3 +178,13 @@ class Environment:
             self.start()
 
         return reward, self.prev_state, self.done
+    
+    def show_racetrack(self, save_path=None):
+        im =  plt.imshow(self.track)
+
+        plt.axis("off")
+
+        if save_path is not None:
+            plt.savefig(save_path, bbox_inches="tight")
+
+        plt.show()
