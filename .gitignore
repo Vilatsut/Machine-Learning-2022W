@@ -1,2 +1,5 @@
 venv/
 *.pyc
+temp
+EX3/agentother.py
+EX3/mainother.py
