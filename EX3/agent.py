@@ -6,23 +6,29 @@ NUM_SPEEDS = 5
 NUM_ACTIONS = 9
 
 class Agent:
-	def __init__(self, env, epsilon) -> None:
+	def __init__(self, env, epsilon, y) -> None:
 		
 		self.env = env
 		self.epsilon = epsilon
+		self.y = y
+		self.Q_vals = np.random.rand(env.track.shape[1],env.track.shape[0],5,5,9)*400 - 500
+		self.C_vals = np.zeros((env.track.shape[1],env.track.shape[0],5,5,9))
 
 		self.action_values = None
 		self.action_counts = None
 		self.policy = None
 		self.reset()
 
-		self.acc_actions = [(1, 1), (0, 1), (1, 0), (0, 0), (-1, 0), (0, -1), (1, -1), (-1, 1), (-1, -1)]
+		self.acc_actions = [(1, 1), (1, 0), (0, 1), (0, 0), (-1, 0), (0, -1), (1, -1), (-1, 1), (-1, -1)]
 
-	def play_episode(self, explore = True, learn = True):
+	def play_episode(self, start_state = None, explore = True, learn = True):
 		
 		sequence = []
 		self.env.start()
 
+		if start_state:
+			self.env.state = start_state
+			
 		# Play an episode
 		while not self.env.done:
 			
@@ -33,6 +39,7 @@ class Agent:
 				action = self.explore(self.policy[state])
 			else:
 				action = self.acc_actions[self.policy[state]]
+				print(action)
 
 			# Get step reward
 			reward, new_state, done = self.env.step(action)
@@ -40,25 +47,30 @@ class Agent:
 			# Add new state-action pair to sequence
 			sequence.append((state, action, reward))
 
+		returns = list(range(-1, -len(sequence), -1))
 		if learn:
-			# Get returns for state-action pairs
-			returns = np.zeros(len(sequence))
-			for i in reversed(range(len(sequence))):
-				for j in range(i + 1):
-					returns[j] += sequence[i][2]
+			G = 0
+			W = 1
+			T = len(sequence)-1
+			for t in range(T-1,-1,-1):
+				G = self.y * G + returns[t-1]
+				S_t = sequence[t][0]
+				A_t = sequence[t][1]
+				
+				S_list = list(S_t)
+				S_list.append(A_t)
+				SA = tuple(S_list)
+				
+				self.C_vals[SA] += W
+				self.Q_vals[SA] += (W*(G-self.Q_vals[SA]))/(self.C_vals[SA])           
+				self.policy[S_t] = np.argmax(self.Q_vals[S_t])
 
-		# Get new action values for state-action pairs 
-		for seq, ret in zip(sequence, returns):
-			state_action = seq[0] + (seq[1],)
-			# (Return - prev_action_value) / (action_count + 1)
-			self.action_values[state_action] = (ret - self.action_values[state_action]) / (self.action_counts[state_action] + 1)
-			self.action_counts[state_action] += 1
-		
 		return returns[0], sequence
 
 	# Update policys for state-action pairs
 	def update_policy(self):
-		self.policy = np.argmax(self.action_values, axis=-1)
+		pass
+		# self.policy = np.argmax(self.action_values, axis=-1)
 
 	# Pick an action on random or based on policy
 	def explore(self, action):
